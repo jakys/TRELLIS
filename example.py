@@ -4,7 +4,6 @@ os.environ['SPCONV_ALGO'] = 'native'        # Can be 'native' or 'auto', default
                                             # 'auto' is faster but will do benchmarking at the beginning.
                                             # Recommended to set to 'native' if run only once.
 
-import imageio
 from PIL import Image
 from trellis.pipelines import TrellisImageTo3DPipeline
 from trellis.utils import render_utils, postprocessing_utils
@@ -30,18 +29,6 @@ outputs = pipeline.run(
     #     "cfg_strength": 3,
     # },
 )
-# outputs is a dictionary containing generated 3D assets in different formats:
-# - outputs['gaussian']: a list of 3D Gaussians
-# - outputs['radiance_field']: a list of radiance fields
-# - outputs['mesh']: a list of meshes
-
-# Render the outputs
-video = render_utils.render_video(outputs['gaussian'][0])['color']
-imageio.mimsave("sample_gs.mp4", video, fps=30)
-video = render_utils.render_video(outputs['radiance_field'][0])['color']
-imageio.mimsave("sample_rf.mp4", video, fps=30)
-video = render_utils.render_video(outputs['mesh'][0])['normal']
-imageio.mimsave("sample_mesh.mp4", video, fps=30)
 
 # GLB files can be extracted from the outputs
 glb = postprocessing_utils.to_glb(
@@ -53,5 +40,3 @@ glb = postprocessing_utils.to_glb(
 )
 glb.export("sample.glb")
 
-# Save Gaussians as PLY files
-outputs['gaussian'][0].save_ply("sample.ply")

@@ -65,9 +65,10 @@ if [ "$HELP" = true ] ; then
 fi
 
 if [ "$NEW_ENV" = true ] ; then
-    conda create -n trellis python=3.10
-    conda activate trellis
-    conda install pytorch==2.4.0 torchvision==0.19.0 pytorch-cuda=12.1 -c pytorch -c nvidia
+    # conda create -n trellis python=3.10
+    # conda activate trellis
+    # conda install pytorch==2.4.0 torchvision==0.19.0 pytorch-cuda=12.1 -c pytorch -c nvidia
+    pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu121
 fi
 
 # Get system information
@@ -162,7 +163,9 @@ fi
 
 if [ "$FLASHATTN" = true ] ; then
     if [ "$PLATFORM" = "cuda" ] ; then
-        pip install flash-attn
+        # pip install flash-attn
+        wget https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.3/flash_attn-2.7.3+cu12torch2.4cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+        pip install flash_attn-2.7.3+cu12torch2.4cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
     elif [ "$PLATFORM" = "hip" ] ; then
         echo "[FLASHATTN] Prebuilt binaries not found. Building from source..."
         mkdir -p /tmp/extensions

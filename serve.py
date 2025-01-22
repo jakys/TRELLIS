@@ -79,7 +79,13 @@ def sana_gen_image(prompt,device="cuda:0", seed=23, steps=20):
     '''
     # prompt = prompt + ' white background cartoon 3D three-dimensional'
     # prompt = prompt + ' white background 3D'
-    prompt = prompt + ', style: white background cartoon 3D three-dimensional'
+    # prompt = prompt + ', style: no shadows, white background cartoon 3D three-dimensional'
+    # prompt = prompt + ', style: white background cartoon 3D three-dimensional, no shadows'
+    # prompt = prompt + ' white background cartoon 3D three-dimensional, no shadows'
+    # prompt = prompt + ', style: white background 3D three-dimensional, no shadows'
+    # prompt = prompt + ', style: white background, 3D, no shadows'
+    # prompt = prompt + ', style: white background, 3D, three-dimensional, no shadows'
+    prompt = prompt + ', style: white background 3D three-dimensional, no shadows'
     rgb = pipe(
         prompt=prompt,
         height=1024,
@@ -155,6 +161,23 @@ async def text_to_3d(prompt: str = Body()):
 
     return {"success": True, "path": output_folder}
 
+@app.post("/generate_from_image")
+async def image_to_3d(image_path: str):
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=400, detail="Image file not found")
+
+    start = time.time()
+    output_folder = os.path.join(args.save_folder, "image_to_3d")
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Load Image
+    res_rgb_pil = Image.open(image_path)
+    process_image_to_3d(res_rgb_pil, output_folder)
+    
+    print(f"Successfully generated: {output_folder}")
+    print(f"Generation time: {time.time() - start}")
+
+    return {"message": "3D model generated successfully from image", "output_folder": output_folder}
 
 if __name__ == "__main__":
     
